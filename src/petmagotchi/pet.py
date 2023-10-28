@@ -1,0 +1,1 @@
+#main package file for petmagotchi, develop code here.
