@@ -31,6 +31,7 @@ class Pet:
             return f"{self.name} is excited and happy to be with you!"
 
     def get_status(self):
+        self._update_status()
         return {
             "Pet": self.name,
             "Mood": self.get_mood(),
@@ -39,7 +40,7 @@ class Pet:
             "Cleanliness": self.sanitation_level
         }
 
-    def update_status(self):
+    def _update_status(self):
         time_change = time.time() - self.last_update_time
         rate_of_change = time_change / 1800
         self.food_level = max(self.food_level - rate_of_change * Pet.HUNGER_RATE, 0)
