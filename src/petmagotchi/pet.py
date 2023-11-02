@@ -42,24 +42,6 @@ class Pet:
             return f"{self.name} is feeling ok..."
         else:
             return f"{self.name} is excited and happy to be with you!"
-    
-    #TODO: unit test
-    def _get_image(self, mood):
-        imgAddress = "images/"
-        if(self.type == "cat"):
-            imgAddress += "cat/cat_"
-        elif(self.type == "dog"):
-            imgAddress += "dog/dog_"
-        
-        if mood == "upset":
-            imgAddress += "upset"
-        elif mood == "neutral":
-            imgAddress += "neutral"
-        else:
-            imgAddress += "happy"
-        
-        imgAddress += ".png"
-        return Image.open(imgAddress)
 
     def _update_status(self):
         time_change = time.time() - self.last_update_time
@@ -162,13 +144,32 @@ class Pet:
                 reationStr = f"{self.name} enjoyed being pet!"
         self.mood_level = min(self.mood_level + mood_increase, 100)
         print(reationStr)
-
-    #TODO: unit test       
-    def check_mood(self):
-        if 0 <= self.mood_level < 30:
-            return self._get_image("upset")
-        elif 30 <= self.mood_level < 80:
-            return self._get_image("neutral")
-        else:
-            return self._get_image("happy")
+    
+    #TODO: unit test
+    def _get_image(self, mood):
+        imgAddress = "src/images/"
+        if(self.type == "Cat"):
+            imgAddress += "cat/cat_"
+        elif(self.type == "Dog"):
+            imgAddress += "dog/dog_"
         
+        if mood == "upset":
+            imgAddress += "upset"
+        elif mood == "neutral":
+            imgAddress += "neutral"
+        else:
+            imgAddress += "happy"
+        
+        imgAddress += ".png"
+        return Image.open(imgAddress)
+    
+    #TODO: unit test
+    def see_pet(self):
+        print(f"Here's what {self.name} looks like right now:")
+        if 0 <= self.mood_level < 30:
+            return self._get_image("upset").show()
+        elif 30 <= self.mood_level < 80:
+            return self._get_image("neutral").show()
+        else:
+            return self._get_image("happy").show()
+
