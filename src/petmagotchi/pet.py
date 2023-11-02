@@ -40,6 +40,7 @@ class Pet:
         else:
             return f"{self.name} is excited and happy to be with you!"
     
+    #TODO: unit test
     def get_image(self, mood):
         imgAddress = "images/"
         if(self.type == "cat"):
@@ -103,6 +104,7 @@ class Pet:
         
         print(reactions.get(food, f"{self.name} enjoyed the meal!"))
 
+    #TODO: unit test
     def play(self, toy):
         status = self.get_updated_status()
         if toy not in Pet.TOYS:
@@ -129,7 +131,8 @@ class Pet:
             self.mood_level = min(self.mood_level + mood_increase, 100)
             self.energy_level = max(self.energy_level - energy_decrease, 0)
         print(reationStr + "They can't wait to play again!")
-                
+          
+    #TODO: unit test      
     def wash(self):
         status = self.get_updated_status()
         if status["Cleanliness"] == 100:
@@ -137,7 +140,8 @@ class Pet:
         else:
             self.sanitation_level = 100
             print(f"{self.name} is squeaky clean now!")
-            
+    
+    #TODO: unit test        
     def pet(self):
         status = self.get_updated_status()
         
@@ -154,7 +158,8 @@ class Pet:
                 reationStr = f"{self.name} enjoyed being pet!"
         self.mood_level = min(self.mood_level + mood_increase, 100)
         print(reationStr)
-                
+
+    #TODO: unit test       
     def check_mood(self):
         if 0 <= self.mood_level < 30:
             return self.get_image("upset")
