@@ -8,7 +8,7 @@ class TestPet(unittest.TestCase):
         self.pet = Pet(name="Fluffy", type="Cat")
 
     def test_feed_pet_valid_food(self):
-        self.pet.get_updated_status()
+        self.pet.get_status()
         initial_food_level = self.pet.food_level
         initial_mood_level = self.pet.mood_level
         self.pet.feed_pet("meat", 2)

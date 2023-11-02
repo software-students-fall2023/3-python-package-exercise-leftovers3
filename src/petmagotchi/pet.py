@@ -37,8 +37,8 @@ class Pet:
             return f"{self.name} is happy!"
         else:
             return f"{self.name} is excited and happy to be with you!"
-
-    def get_updated_status(self):
+        
+    def update_status(self):
         time_change = time.time() - self.last_update_time
         rate_of_change = time_change / 1800
         self.food_level = max(self.food_level - rate_of_change * Pet.HUNGER_RATE, 0)
@@ -46,6 +46,9 @@ class Pet:
         self.sanitation_level = max(self.sanitation_level - rate_of_change * Pet.CLEANLINESS_RATE, 0)
         self.mood_level = max(self.mood_level - rate_of_change * Pet.MOOD_RATE, 0)
         self.last_update_time = time.time()
+
+    def get_status(self):
+        self.update_status()
         return {
             "Pet": self.name,
             "Mood": self.get_mood(),
@@ -55,13 +58,13 @@ class Pet:
         }
     
     def print_status(self):
-        status = self.get_updated_status()
+        status = self.get_status()
         order = ["Pet","Mood","Hunger","Thirst","Cleanliness"]
         for key in order:
             print(key+":",status[key])
 
     def feed_pet(self,food,quantity):
-        self.get_updated_status()
+        self.update_status()
         if food not in Pet.VALID_FOODS:
             raise Pet.InvalidFoodError(f"'{food}' is not a valid food. Valid foods are: {', '.join(Pet.VALID_FOODS)}")
         if quantity>3 or quantity<1:
