@@ -2,11 +2,20 @@ import pytest
 import random
 from io import StringIO
 from petmagotchi.pet import Pet
-from unittest.mock import patch
+from unittest.mock import patch, Mock
+
+
 
 class TestPet:
     def setup_method(self):
         self.pet = Pet(name="Yuka", type="Cat")
+
+    #helper mock function
+    def mocked_update_status(self):
+        self.pet.food_level = 10
+        self.pet.water_level = 20
+        self.pet.sanitation_level = 30
+        self.pet.mood_level = 40
     
     #tests constructor
     def test_pet_creation(self):
@@ -88,21 +97,41 @@ class TestPet:
                 self.pet.mood_level = random_mood
                 assert self.pet.get_mood() == expected_mood
 
+    #Test get_status
+    def test_get_status_without_actual_update(self):
+        mock_update_status = Mock()
+        with patch.object(Pet, 'update_status', mock_update_status):
+            status = self.pet.get_status()
+        mock_update_status.assert_called_once()
+        assert status["Hunger"] == self.pet.food_level
+        assert status["Thirst"] == self.pet.water_level
+        assert status["Cleanliness"] == self.pet.sanitation_level
+        assert status["Mood"] == self.pet.get_mood()
 
-    #Test get_updated_status
+    def test_get_status_with_mocked_update(self):
+        with patch.object(Pet, 'update_status', side_effect=self.mocked_update_status):
+            status = self.pet.get_status()
+
+        assert status["Hunger"] == 10
+        assert status["Thirst"] == 20
+        assert status["Cleanliness"] == 30
+        assert status["Mood"] == self.pet.get_mood()
+
+
+    #Test update_status
     def test_update_status_value_decrease(self):
         starting_time = 0
         jump = 3600
         with patch('time.time', return_value=starting_time):
             self.pet = Pet(name="Yuka", type="Cat")
-            initial_status = self.pet.get_updated_status()
+            self.pet.update_status()
             initial_food = self.pet.food_level
             initial_water = self.pet.water_level
             initial_sanitation = self.pet.sanitation_level
             initial_mood = self.pet.mood_level
 
         with patch('time.time', return_value=starting_time + jump):
-            updated_status = self.pet.get_updated_status()
+            self.pet.update_status()
             updated_food = self.pet.food_level
             updated_water = self.pet.water_level
             updated_sanitation = self.pet.sanitation_level
@@ -112,9 +141,6 @@ class TestPet:
         assert updated_water < initial_water
         assert updated_sanitation < initial_sanitation
         assert updated_mood < initial_mood
-        assert updated_status["Hunger"] < initial_status["Hunger"]
-        assert updated_status["Thirst"] < initial_status["Thirst"]
-        assert updated_status["Cleanliness"] < initial_status["Cleanliness"]
         
 
     def test_exact_status_update_values(self):
@@ -133,15 +159,12 @@ class TestPet:
         expected_mood_change = (jump/1800) * Pet.MOOD_RATE
 
         with patch('time.time', return_value=starting_time + jump):
-            updated_status = self.pet.get_updated_status()
+            updated_status = self.pet.get_status()
 
         assert self.pet.food_level == max(initial_food - expected_food_change, 0)
         assert self.pet.water_level == max(initial_water - expected_water_change, 0)
         assert self.pet.sanitation_level == max(initial_sanitation - expected_sanitation_change, 0)
         assert self.pet.mood_level == max(initial_mood - expected_mood_change, 0)
-        assert updated_status["Hunger"] == max(initial_food - expected_food_change, 0)
-        assert updated_status["Thirst"] == max(initial_water - expected_water_change, 0)
-        assert updated_status["Cleanliness"] == max(initial_sanitation - expected_sanitation_change, 0)
 
     def test_minimum_status_values_after_large_time_jump(self):
         starting_time = 0
@@ -150,14 +173,12 @@ class TestPet:
             self.pet = Pet(name="Yuka", type="Cat")
 
         with patch('time.time', return_value=starting_time + large_jump):
-            updated_status = self.pet.get_updated_status()
-            updated_mood = self.pet.mood_level
+            self.pet.update_status()
 
-        assert updated_status["Hunger"] == 0
-        assert updated_status["Thirst"] == 0
-        assert updated_status["Cleanliness"] == 0
+        assert self.pet.food_level == 0
+        assert self.pet.water_level == 0
+        assert self.pet.sanitation_level == 0
         assert self.pet.mood_level == 0
-        assert updated_status["Mood"] == f"{self.pet.name} is sad and lonely..."
 
     #test print status
     def test_print_status(self):
@@ -169,10 +190,10 @@ class TestPet:
 
         expected_output = [
             "Pet: Yuka",
-            f"Mood: {self.pet.get_updated_status()['Mood']}",
-            f"Hunger: {self.pet.get_updated_status()['Hunger']}",
-            f"Thirst: {self.pet.get_updated_status()['Thirst']}",
-            f"Cleanliness: {self.pet.get_updated_status()['Cleanliness']}"
+            f"Mood: {self.pet.get_status()['Mood']}",
+            f"Hunger: {self.pet.get_status()['Hunger']}",
+            f"Thirst: {self.pet.get_status()['Thirst']}",
+            f"Cleanliness: {self.pet.get_status()['Cleanliness']}"
         ]
 
         for i in range(len(lines)):
