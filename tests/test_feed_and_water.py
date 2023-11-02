@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from petmagotchi.pet import Pet
+from src.petmagotchi.pet import Pet
 
 class TestPet(unittest.TestCase):
 
