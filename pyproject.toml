@@ -8,6 +8,7 @@ description = "A fun Tamagotchi and pet simulation package!"
 version = "0.1.0"
 authors = [
   { name="Capks", email="capks@placeholder.com" },
+  { name="Allyson", email="abc9295@nyu.edu" },
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
