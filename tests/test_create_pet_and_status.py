@@ -32,7 +32,7 @@ class TestPet:
             Pet(name="Yuka",type=123)
     
     def test_pet_creation_boundary_values(self):
-        pets = [Pet(name="Test",type="Type") for _ in range(1000)]
+        pets = [Pet(name="Test",type="Cat") for _ in range(1000)]
         food_levels = [pet.food_level for pet in pets]
         water_levels = [pet.water_level for pet in pets]
         sanitation_levels = [pet.sanitation_level for pet in pets]
@@ -147,20 +147,21 @@ class TestPet:
             initial_energy = self.pet.energy_level
             initial_mood = self.pet.mood_level
 
-        expected_food_change = (jump/1800) * Pet.HUNGER_RATE
-        expected_water_change = (jump/1800) * Pet.THIRST_RATE
-        expected_sanitation_change = (jump/1800) * Pet.CLEANLINESS_RATE
-        expected_energy_change = (jump/1800) * Pet.ENERGY_RATE
-        expected_mood_change = (jump/1800) * Pet.MOOD_RATE
+        expected_food_change = (jump / 1800) * Pet.HUNGER_RATE
+        expected_water_change = (jump / 1800) * Pet.THIRST_RATE
+        expected_sanitation_change = (jump / 1800) * Pet.CLEANLINESS_RATE
+        expected_energy_change = (jump / 1800) * Pet.ENERGY_RATE
+        expected_mood_change = (jump / 1800) * Pet.MOOD_RATE
 
         with patch('time.time', return_value=starting_time + jump):
             updated_status = self.pet.get_status()
 
-        assert self.pet.food_level == max(initial_food - expected_food_change, 0)
-        assert self.pet.water_level == max(initial_water - expected_water_change, 0)
-        assert self.pet.sanitation_level == max(initial_sanitation - expected_sanitation_change, 0)
-        assert self.pet.energy_level == min(initial_energy + expected_energy_change, 100)
-        assert self.pet.mood_level == max(initial_mood - expected_mood_change, 0)
+        assert self.pet.food_level == max(round(initial_food - expected_food_change), 0)
+        assert self.pet.water_level == max(round(initial_water - expected_water_change), 0)
+        assert self.pet.sanitation_level == max(round(initial_sanitation - expected_sanitation_change), 0)
+        assert self.pet.energy_level == min(round(initial_energy + expected_energy_change), 100)
+        assert self.pet.mood_level == max(round(initial_mood - expected_mood_change), 0)
+
 
     def test_minimum_status_values_after_large_time_jump(self):
         starting_time = 0
