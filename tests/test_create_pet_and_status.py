@@ -1,7 +1,7 @@
 import pytest
 import random
 from io import StringIO
-from src.petmagotchi.pet import Pet
+from petmagotchi.pet import Pet
 from unittest.mock import patch, Mock
 
 class TestPet:
