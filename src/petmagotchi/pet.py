@@ -12,13 +12,17 @@ class Pet:
         
     class InvalidToyError(Exception):
         """Raised when the user gives too many or too little quantity"""
+
+    class InvalidDrinkError(Exception):
+        """Raised when an invalid drink is given to the pet."""
     
     HUNGER_RATE = 3
     THIRST_RATE = 4
     CLEANLINESS_RATE = 1
     MOOD_RATE = 2
     ENERGY_RATE = 2
-    VALID_FOODS = {'meat':(15,5),'vegetable':(10,2),'ice cream':(5,15),'bread':(8,8)} #meal:(hunger fiil, mood increase)
+    VALID_FOODS = {'meat':(15,5),'vegetable':(10,2),'ice cream':(5,15),'bread':(8,8)} #meal:(hunger fill, mood increase)
+    VALID_DRINKS = {'water':(15, 0), 'soda':(5, 10), 'milk':(13, 5), 'lemonade':(-5, 12)} #drink:(thirst fill, mood increase)
     TOYS = {'yarn': 10,'ball':12,'plushie':15,'bone':10} #toy: mood increase
     VALID_TYPES = ["Cat","Dog"]
     
@@ -37,6 +41,13 @@ class Pet:
         self.last_update_time = time.time()
         
         self.favoriteToy = random.choice(list(Pet.TOYS.keys()))
+
+        if type == "Cat":
+            self.favoriteDrink = "milk"
+        elif type == "Dog":
+            valid_drinks = list(Pet.VALID_DRINKS.keys())
+            valid_drinks.remove("milk")
+            self.favoriteDrink = random.choice(valid_drinks)
 
     def get_mood(self):
         if 0 <= self.mood_level < 30:
@@ -65,7 +76,8 @@ class Pet:
             "Thirst": self.water_level,
             "Energy": self.energy_level,
             "Cleanliness": self.sanitation_level,
-            "Favorite Toy": self.favoriteToy
+            "Favorite Toy": self.favoriteToy,
+            "Favorite Drink": self.favoriteDrink
         }
     
     def print_status(self):
@@ -95,6 +107,33 @@ class Pet:
         }
         
         print(reactions.get(food, f"{self.name} enjoyed the meal!"))
+    
+    def hydrate_pet(self, drink, quantity):
+        self._update_status()
+        if not isinstance(drink, str):
+            raise ValueError("Drink must be a string")
+        if not isinstance(quantity, int):
+            raise ValueError("Quantity must be an int.")
+        if drink not in Pet.VALID_DRINKS:
+            raise Pet.InvalidDrinkError(f"'{drink}' is not a valid food. Valid drinks are: {', '.join(Pet.VALID_DRINKS)}")
+        if quantity > 4:
+            raise Pet.InvalidQuantityError(f"'{quantity}' is not a valid quantity!  Try to limit giving your pet up to 3 drinks at a time.")
+        if quantity < 1:
+            raise Pet.InvalidQuantityError(f"You cruel person... You can't not give your pet a drink or try to take drinks away from them!")
+        
+        thirst_fill = Pet.VALID_DRINKS[drink][0]
+        mood_increase = Pet.VALID_DRINKS[drink][1]
+        self.water_level = min(self.water_level + (thirst_fill * quantity), 100)
+        self.mood_level = min(self.mood_level + (mood_increase * quantity) + (10 if drink == self.favoriteDrink else 0), 100)
+        
+        reactions = {
+            "water": f"{self.name} hydrates with water.",
+            "soda": f"The soda fizzes in {self.name}'s mouth with a delightful feeling.",
+            "milk": f"{self.name} takes a healthy chug of milk.",
+            "lemonade": f"Nothing like fresh lemonade to cool off {self.name} on this fine day!"
+        }
+
+        print(reactions.get(drink, f"{self.name} is feeling refreshed!") + (' It\'s their favorite drink! +10 hydration. ' if drink == self.favoriteDrink else ''))
 
     def play(self, toy):
         self._update_status()
