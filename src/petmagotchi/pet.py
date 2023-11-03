@@ -20,10 +20,13 @@ class Pet:
     ENERGY_RATE = 2
     VALID_FOODS = {'meat':(15,5),'vegetable':(10,2),'ice cream':(5,15),'bread':(8,8)} #meal:(hunger fiil, mood increase)
     TOYS = {'yarn': 10,'ball':12,'plushie':15,'bone':10} #toy: mood increase
+    VALID_TYPES = ["Cat","Dog"]
     
     def __init__(self, name, type):
         if not isinstance(name, str) or not isinstance(type, str):
             raise ValueError("Name and type must be strings.")
+        if not isinstance(type, str) or type not in Pet.VALID_TYPES:
+            raise ValueError(f"Type must be one of the following: {', '.join(Pet.VALID_TYPES)}.")
         self.name = name
         self.type = type
         self.food_level = random.randint(55, 80)
@@ -46,11 +49,11 @@ class Pet:
     def _update_status(self):
         time_change = time.time() - self.last_update_time
         rate_of_change = time_change / 1800
-        self.food_level = max(self.food_level - rate_of_change * Pet.HUNGER_RATE, 0)
-        self.water_level = max(self.water_level - rate_of_change * Pet.THIRST_RATE, 0)
-        self.sanitation_level = max(self.sanitation_level - rate_of_change * Pet.CLEANLINESS_RATE, 0)
-        self.mood_level = max(self.mood_level - rate_of_change * Pet.MOOD_RATE, 0)
-        self.energy_level = min(self.energy_level + rate_of_change * Pet.ENERGY_RATE, 100)
+        self.food_level = max(round(self.food_level - rate_of_change * Pet.HUNGER_RATE), 0)
+        self.water_level = max(round(self.water_level - rate_of_change * Pet.THIRST_RATE), 0)
+        self.sanitation_level = max(round(self.sanitation_level - rate_of_change * Pet.CLEANLINESS_RATE), 0)
+        self.mood_level = max(round(self.mood_level - rate_of_change * Pet.MOOD_RATE), 0)
+        self.energy_level = min(round(self.energy_level + rate_of_change * Pet.ENERGY_RATE), 100)
         self.last_update_time = time.time()
 
     def get_status(self):
