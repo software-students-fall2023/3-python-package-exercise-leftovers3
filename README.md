@@ -113,6 +113,9 @@ my_Pet.see_pet()
 
 The image you see will depend on your pet's mood.
 
+### Example file
+To see an example file with the above methods, click [here](https://github.com/software-students-fall2023/3-python-package-exercise-leftovers3/blob/main/src/petmagotchi/__main__.py).
+
 ## Contributing to the package
 
 Feel free to contribute to the project! Here are the steps you can take to contribute.
