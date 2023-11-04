@@ -31,15 +31,19 @@ Any pet name is allowed, given that the pet name is a string.
 
 The current version only supports two types of pets: Dog, Cat
 
-Therefore, valid commands look like: 
- - my_Pet = Pet(name = 'Yuka', type = 'Cat')
- - my_Pet = Pet(name = 'Kylo', type = 'Dog')
+Therefore, valid commands look like:
+```
+my_Pet = Pet(name = 'Yuka', type = 'Cat')
+my_Pet = Pet(name = 'Kylo', type = 'Dog')
+```
 
 ### See the status of your pet: print_status()
 
 To see the status of your pet, use the print_status() method. Example below:
 
+```
 my_Pet.print_status()
+```
 
 This will automatically update your pet status based on the the time since the last action, and show you the status of your pet.
 
@@ -51,8 +55,9 @@ To feed your pet, use the feed_pet(food,quantity) method. This will fill your pe
 - The valid quantity range is: [1,3]
 
 Example below:
-
+```
 my_Pet.feed_pet(food = 'meat', quantity = 2)
+```
 
 ### Hydrate your pet: hydrate_pet(drink, quantity)
 
@@ -63,7 +68,9 @@ Same as feed, but for drinks!
 
 Example below:
 
+```
 my_Pet.feed_pet(drink = 'lemonade', quantity = 3)
+```
 
 ### Play with your pet: play(toy)
 
@@ -74,21 +81,35 @@ Play with your pet by giving it a toy. This will consume some energy but raise t
 
 Example below:
 
+```
 my_Pet.play(toy = 'plushie')
+```
 
 ### Keep your pet clean: wash()
 
-Keep your pet clean by washing him with: my_Pet.wash()
+Keep your pet clean by washing him with: 
+
+```
+my_Pet.wash()
+```
 
 ### Pet your pet: pet()
 
-Pet your pet with: my_Pet.pet()
+Pet your pet with: 
+
+```
+my_Pet.pet()
+```
 
 A pet that is too unhappy may not be willing to come for pets. Keep them happy by playing with them!
 
 ### See your pet: see_pet()
 
-Want to see a picture of your pet? Use the see_pet() method: my_Pet.see_pet()
+Want to see a picture of your pet? Use the see_pet() method: 
+
+```
+my_Pet.see_pet()
+```
 
 The image you see will depend on your pet's mood.
 
@@ -102,17 +123,32 @@ Fork the repository to your own account by visiting our [GitHub page](https://gi
 
 ### Clone the repository to your local computer
 
-Use Git Bash or something similar to clone the repository to your local computer. The command for Git Bash is: git clone ...
+Use Git Bash or something similar to clone the repository to your local computer. The command for Git Bash is: 
+
+```
+git clone ...
+```
 
 Where you replace ... with the url of the repository.
 
 ### Set up your Development Environment
 
 1. Open a terminal with python.
-2. If you do not have pipenv, install the package with the command: pip install pipenv
-3. Once pipenv is installed, install the package dependencies by running: pipenv install --dev
+2. If you do not have pipenv, install the package with the command: 
 
-To activate the virtual environment, run: pipenv shell
+```
+pip install pipenv
+```
+3. Once pipenv is installed, install the package dependencies by running: 
+```
+pipenv install --dev
+```
+
+To activate the virtual environment, run: 
+
+```
+pipenv shell
+```
 
 You can now write your code to contribute to the project.
 
