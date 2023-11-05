@@ -15,6 +15,9 @@ class Pet:
 
     class InvalidDrinkError(Exception):
         """Raised when an invalid drink is given to the pet."""
+
+    class InvalidDestinationError(Exception):
+        """This destination is not a valid place to bring a pet"""
     
     HUNGER_RATE = 3
     THIRST_RATE = 4
@@ -24,6 +27,57 @@ class Pet:
     VALID_FOODS = {'meat':(15,5),'vegetable':(10,2),'ice cream':(5,15),'bread':(8,8)} #meal:(hunger fill, mood increase)
     VALID_DRINKS = {'water':(15, 0), 'soda':(5, 10), 'milk':(13, 5), 'lemonade':(-5, 12)} #drink:(thirst fill, mood increase)
     TOYS = {'yarn': 10,'ball':12,'plushie':15,'bone':10} #toy: mood increase
+    TRAVEL_CD = 60*60  # one hour between trips
+    # stat changes for bring_to destinations
+    TRAVEL_DESTS = {
+        'park': {
+            'res': '%s had a great time at the park, playing and enjoying the fresh air!',
+            'stats': {
+                'mood_level': 20,
+                'sanitation_level': -10,
+                'energy_level': -25,
+                'food_level': -10,
+                'water_level': -10,
+        }},
+        'hike': {
+            'res': '%s really enjoyed hiking the trails and exploring the wilderness!',
+            'stats': {
+                'mood_level': 30,
+                'sanitation_level': -15,
+                'energy_level': -35,
+                'food_level': -15,
+                'water_level': -15,
+        }},
+        'vet': {
+            'res': "The vet makes %s nervous, but they're feeling better already.",
+            'stats': {
+                'mood_level': -20,
+                'energy_level': 35,
+        }},
+        'groomer': {
+            'res': "%s had a spa day at the groomer's! They got pampered and received a fresh new look.",
+            'stats': {
+                'mood_level': 15,
+                'sanitation_level': 100,
+                'energy_level': -15,
+        }},
+        'cafe': {
+            'res': '%s had a fun time at the pet cafe, enjoying treats and making friends.',
+            'stats': {
+                'mood_level': 15,
+                'energy_level': -15,
+                'food_level': 5,
+                'water_level': 5,
+        }},
+    }
+    # alert messages when a stat is too low.
+    TRAVEL_ALERTS = {
+        'mood_level': '%s refuses to leave the house! Do something to improve their mood.',
+        'sanitation_level': "%s can't leave the house looking like that! They might need a bath.",
+        'energy_level': '%s is too tired to go there right now.',
+        'food_level': "%s is too hungry. They won't leave without a snack.",
+        'water_level': "%s is too thirsty. They need a drink!",
+    }
     VALID_TYPES = ["Cat","Dog"]
     
     def __init__(self, name, type):
@@ -39,6 +93,7 @@ class Pet:
         self.mood_level = 90
         self.energy_level = random.randint(55, 80)
         self.last_update_time = time.time()
+        self.last_travel = time.time()
         
         self.favoriteToy = random.choice(list(Pet.TOYS.keys()))
 
@@ -211,4 +266,44 @@ class Pet:
             return self._get_image("neutral")
         else:
             return self._get_image("happy")
+        
+    def bring_to(self, destination):
+        self._update_status()
 
+        # bad dest
+        if not isinstance(destination, str):
+            raise ValueError('Destination must be a string.')
+
+        # lower
+        destination = destination.lower()
+
+        # invalid dest
+        if destination not in Pet.TRAVEL_DESTS:
+            raise Pet.InvalidToyError(
+                f"'{destination}' is not a valid toy. Valid toys are: {', '.join(Pet.TRAVEL_DESTS.keys())}"
+            )
+
+        # traveling too soon
+        now = time.time()
+        if now < self.last_travel + Pet.TRAVEL_CD:
+            return f"{self.name} wants to relax at home. Try waiting some time before bringing them out again!"
+        self.last_travel = now
+
+        # update stats, return res string
+        stat_change = Pet.TRAVEL_DESTS[destination]['stats']
+        updated_stats = []
+        try:
+            for stat in stat_change:
+                current = getattr(self, stat)
+                changed = current + stat_change[stat]
+                if changed < 0:
+                    return Pet.TRAVEL_ALERTS[stat] % self.name
+                updated_stats.append((stat, min(changed, 100)))
+
+            for stat, updated in updated_stats:
+                setattr(self, stat, updated)
+
+        except AttributeError:
+            return 'Sorry, traveling is banned right now because of a new pandemic! 🤒'
+        
+        return Pet.TRAVEL_DESTS[destination]['res'] % self.name
