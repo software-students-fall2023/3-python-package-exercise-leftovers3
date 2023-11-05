@@ -12,7 +12,7 @@ TRAVEL_DESTS_PATCH = {
             'energy_level': 30,
             'food_level': 40,
             'water_level': 50,
-        }},
+    }},
     'hike': {
         'res': 'test %s hike',
         'stats': {
