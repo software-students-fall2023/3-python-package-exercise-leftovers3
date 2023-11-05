@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 from petmagotchi.pet import Pet
 
-TRAVEL_CD_PATCH = 60*60  # one hour between trips
+TRAVEL_CD_PATCH = 100
 TRAVEL_DESTS_PATCH = {
     'park': {
         'res': 'test %s park',
@@ -32,18 +32,15 @@ TRAVEL_ALERTS_PATCH = {
 }
 
 
-# testing pet
-@pytest.fixture
-def pet() -> Pet:
-    yield Pet('Moana', 'Dog')  # (my dawg 🐕🐕🐶🌊)
-
 # testing pet, patched config
 @pytest.fixture
-def patch_pet(pet: Pet) -> Pet:
+def pet() -> Pet:
     with patch('petmagotchi.pet.Pet.TRAVEL_CD', TRAVEL_CD_PATCH),\
     patch('petmagotchi.pet.Pet.TRAVEL_DESTS', TRAVEL_DESTS_PATCH),\
     patch('petmagotchi.pet.Pet.TRAVEL_ALERTS', TRAVEL_ALERTS_PATCH):
-        yield pet
+        with patch('time.time', return_value=0):  # create at time 0
+            pet0 = Pet('Moana', 'Dog')  # (my dawg 🐕🐕🐶🌊)
+        yield pet0
 
 
 class TestBringTo():
@@ -52,6 +49,17 @@ class TestBringTo():
         with pytest.raises(ValueError):
             pet.bring_to(123)
     
-    def test_bring_to_invalid_destination(self, patch_pet: Pet):
+    def test_bring_to_invalid_destination(self, pet: Pet):
         with pytest.raises(Pet.InvalidDestinationError):
-            assert patch_pet.bring_to('MovIEs')
+            pet.bring_to('movies')
+
+    def test_bring_to_lower(self, pet: Pet):
+        assert pet.bring_to('PaRk') == 'test Moana park'
+
+    def test_bring_to_travel_cooldown(self, pet: Pet):
+        with patch('time.time', return_value=10):
+            assert pet.bring_to('park') == 'test Moana park'
+        with patch('time.time', return_value=50):
+            assert pet.bring_to('park') == "Moana wants to relax at home. Try waiting some time before bringing them out again!"
+        with patch('time.time', return_value=150):
+            assert pet.bring_to('hike') == 'test Moana hike'
