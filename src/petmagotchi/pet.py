@@ -279,8 +279,8 @@ class Pet:
 
         # invalid dest
         if destination not in Pet.TRAVEL_DESTS:
-            raise Pet.InvalidToyError(
-                f"'{destination}' is not a valid toy. Valid toys are: {', '.join(Pet.TRAVEL_DESTS.keys())}"
+            raise Pet.InvalidDestinationError(
+                f"'{destination}' is not a valid place to bring {self.name}.\nValid destinations are: {', '.join(Pet.TRAVEL_DESTS.keys())}"
             )
 
         # traveling too soon
