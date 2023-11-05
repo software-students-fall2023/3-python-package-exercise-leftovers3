@@ -23,31 +23,31 @@ Create a new python file and install petmagotchi. Then, import the package with 
 
 from petmagotchi import Pet
 
-### Create Pet: Pet(name,type)
+### Create Pet: `Pet(name,type)`
 
-Create your pet instance with the following command: my_Pet = Pet(name = 'pet_name', type = 'type')
+Create your pet instance with the following command: `my_Pet = Pet(name = 'pet_name', type = 'type')`
 
 Any pet name is allowed, given that the pet name is a string.
 
 The current version only supports two types of pets: Dog, Cat
 
 Therefore, valid commands look like:
-```
+```python
 my_Pet = Pet(name = 'Yuka', type = 'Cat')
 my_Pet = Pet(name = 'Kylo', type = 'Dog')
 ```
 
-### See the status of your pet: print_status()
+### See the status of your pet: `print_status()`
 
 To see the status of your pet, use the print_status() method. Example below:
 
-```
+```python
 my_Pet.print_status()
 ```
 
 This will automatically update your pet status based on the the time since the last action, and show you the status of your pet.
 
-### Feed your pet: feed_pet(food, quantity)
+### Feed your pet: `feed_pet(food, quantity)`
 
 To feed your pet, use the feed_pet(food,quantity) method. This will fill your pet's hunger meter and mood. The method will also print out a reaction!
 
@@ -55,11 +55,11 @@ To feed your pet, use the feed_pet(food,quantity) method. This will fill your pe
 - The valid quantity range is: [1,3]
 
 Example below:
-```
+```python
 my_Pet.feed_pet(food = 'meat', quantity = 2)
 ```
 
-### Hydrate your pet: hydrate_pet(drink, quantity)
+### Hydrate your pet: `hydrate_pet(drink, quantity)`
 
 Same as feed, but for drinks!
 
@@ -68,11 +68,11 @@ Same as feed, but for drinks!
 
 Example below:
 
-```
+```python
 my_Pet.feed_pet(drink = 'lemonade', quantity = 3)
 ```
 
-### Play with your pet: play(toy)
+### Play with your pet: `play(toy)`
 
 Play with your pet by giving it a toy. This will consume some energy but raise their mood. Pets also have a favorite toy!
 
@@ -81,37 +81,49 @@ Play with your pet by giving it a toy. This will consume some energy but raise t
 
 Example below:
 
-```
+```python
 my_Pet.play(toy = 'plushie')
 ```
 
-### Keep your pet clean: wash()
+### Keep your pet clean: `wash()`
 
 Keep your pet clean by washing him with: 
 
-```
+```python
 my_Pet.wash()
 ```
 
-### Pet your pet: pet()
+### Pet your pet: `pet()`
 
 Pet your pet with: 
 
-```
+```python
 my_Pet.pet()
 ```
 
 A pet that is too unhappy may not be willing to come for pets. Keep them happy by playing with them!
 
-### See your pet: see_pet()
+### See your pet: `see_pet()`
 
 Want to see a picture of your pet? Use the see_pet() method: 
 
-```
+```python
 my_Pet.see_pet()
 ```
 
 The image you see will depend on your pet's mood.
+
+
+### Bring them somewhere: `bring_to(destination)`
+
+Take your pet somewhere fun!
+
+You can take them to the `park`, on a `hike`, to the `vet`, to the `groomer`, or lastly to a pet `cafe`.
+
+```python
+my_Pet.bring_to('park')
+```
+
 
 ### Example file
 To see an example file with the above methods, click [here](https://github.com/software-students-fall2023/3-python-package-exercise-leftovers3/blob/main/src/petmagotchi/__main__.py).

@@ -15,7 +15,10 @@ class Pet:
 
     class InvalidDrinkError(Exception):
         """Raised when an invalid drink is given to the pet."""
-    
+
+    class InvalidDestinationError(Exception):
+        """This destination is not a valid place to bring a pet"""
+
     HUNGER_RATE = 3
     THIRST_RATE = 4
     CLEANLINESS_RATE = 1
@@ -24,6 +27,57 @@ class Pet:
     VALID_FOODS = {'meat':(15,5),'vegetable':(10,2),'ice cream':(5,15),'bread':(8,8)} #meal:(hunger fill, mood increase)
     VALID_DRINKS = {'water':(15, 0), 'soda':(5, 10), 'milk':(13, 5), 'lemonade':(-5, 12)} #drink:(thirst fill, mood increase)
     TOYS = {'yarn': 10,'ball':12,'plushie':15,'bone':10} #toy: mood increase
+    TRAVEL_CD = 60*60  # one hour between trips
+    # stat changes for bring_to destinations
+    TRAVEL_DESTS = {
+        'park': {
+            'res': '%s had a great time at the park, playing and enjoying the fresh air!',
+            'stats': {
+                'mood_level': 20,
+                'sanitation_level': -10,
+                'energy_level': -25,
+                'food_level': -10,
+                'water_level': -10,
+        }},
+        'hike': {
+            'res': '%s really enjoyed hiking the trails and exploring the wilderness!',
+            'stats': {
+                'mood_level': 30,
+                'sanitation_level': -15,
+                'energy_level': -35,
+                'food_level': -15,
+                'water_level': -15,
+        }},
+        'vet': {
+            'res': "The vet makes %s nervous, but they're feeling better already.",
+            'stats': {
+                'mood_level': -20,
+                'energy_level': 35,
+        }},
+        'groomer': {
+            'res': "%s had a spa day at the groomer's! They got pampered and received a fresh new look.",
+            'stats': {
+                'mood_level': 15,
+                'sanitation_level': 100,
+                'energy_level': -15,
+        }},
+        'cafe': {
+            'res': '%s had a fun time at the pet cafe, enjoying treats and making friends.',
+            'stats': {
+                'mood_level': 15,
+                'energy_level': -15,
+                'food_level': 5,
+                'water_level': 5,
+        }},
+    }
+    # alert messages when a stat is too low.
+    TRAVEL_ALERTS = {
+        'mood_level': '%s refuses to leave the house! Do something to improve their mood.',
+        'sanitation_level': "%s can't leave the house looking like that! They might need a bath.",
+        'energy_level': '%s is too tired to go there right now.',
+        'food_level': "%s is too hungry. They won't leave without a snack.",
+        'water_level': "%s is too thirsty. They need a drink!",
+    }
     VALID_TYPES = ["Cat","Dog"]
     
     def __init__(self, name, type):
@@ -39,7 +93,8 @@ class Pet:
         self.mood_level = 90
         self.energy_level = random.randint(55, 80)
         self.last_update_time = time.time()
-        
+        self.last_travel = time.time() - Pet.TRAVEL_CD
+
         self.favoriteToy = random.choice(list(Pet.TOYS.keys()))
 
         if type == "Cat":
@@ -79,7 +134,7 @@ class Pet:
             "Favorite Toy": self.favoriteToy,
             "Favorite Drink": self.favoriteDrink
         }
-    
+
     def print_status(self):
         status = self.get_status()
         order = ["Pet","Mood","Hunger","Thirst","Energy","Cleanliness", "Favorite Toy"]
@@ -105,9 +160,9 @@ class Pet:
             "ice cream": f"The sweet treat draws a smile on {self.name}'s face! He appreciates that you wiped the leftover cream from his mouth.",
             "bread": f"Perfect toasty sandwich! A comfortable meal for {self.name}."
         }
-        
+
         print(reactions.get(food, f"{self.name} enjoyed the meal!"))
-    
+
     def hydrate_pet(self, drink, quantity):
         self._update_status()
         if not isinstance(drink, str):
@@ -120,12 +175,12 @@ class Pet:
             raise Pet.InvalidQuantityError(f"'{quantity}' is not a valid quantity!  Try to limit giving your pet up to 3 drinks at a time.")
         if quantity < 1:
             raise Pet.InvalidQuantityError(f"You cruel person... You can't not give your pet a drink or try to take drinks away from them!")
-        
+
         thirst_fill = Pet.VALID_DRINKS[drink][0]
         mood_increase = Pet.VALID_DRINKS[drink][1]
         self.water_level = min(self.water_level + (thirst_fill * quantity), 100)
         self.mood_level = min(self.mood_level + (mood_increase * quantity) + (10 if drink == self.favoriteDrink else 0), 100)
-        
+
         reactions = {
             "water": f"{self.name} hydrates with water.",
             "soda": f"The soda fizzes in {self.name}'s mouth with a delightful feeling.",
@@ -141,7 +196,7 @@ class Pet:
             raise ValueError("Toy must be a string.")
         if toy not in Pet.TOYS:
             raise Pet.InvalidToyError(f"'{toy}' is not a valid toy. Valid toys are: {', '.join(Pet.TOYS)}")
-        
+
         reationStr = ""
         if self.energy_level < 10:
             print(f"{self.name} is too tired to play. Lets give them a break!")
@@ -161,7 +216,7 @@ class Pet:
             self.mood_level = min(self.mood_level + mood_increase, 100)
             self.energy_level = max(self.energy_level - energy_decrease, 0)
         print(reationStr + "They can't wait to play again!")
-          
+
     def wash(self):
         self._update_status()
         if self.sanitation_level == 100:
@@ -169,7 +224,7 @@ class Pet:
         else:
             self.sanitation_level = 100
             print(f"{self.name} is squeaky clean now!")
-    
+
     def pet(self):
         self._update_status()
         
@@ -186,7 +241,7 @@ class Pet:
                 reationStr = f"{self.name} enjoyed being pet!"
         self.mood_level = min(self.mood_level + mood_increase, 100)
         print(reationStr)
-    
+
     def _get_image(self, mood):
         imgAddress = "src/images/"
         if(self.type == "Cat"):
@@ -203,7 +258,7 @@ class Pet:
         
         imgAddress += ".png"
         return Image.open(imgAddress)
-    
+
     def see_pet(self):
         if 0 <= self.mood_level < 30:
             return self._get_image("upset")
@@ -212,3 +267,40 @@ class Pet:
         else:
             return self._get_image("happy")
 
+    def bring_to(self, destination):
+        self._update_status()
+
+        # bad dest
+        if not isinstance(destination, str):
+            raise ValueError('Destination must be a string.')
+
+        # lower
+        destination = destination.lower()
+
+        # invalid dest
+        if destination not in Pet.TRAVEL_DESTS:
+            raise Pet.InvalidDestinationError(
+                f"'{destination}' is not a valid place to bring {self.name}.\nValid destinations are: {', '.join(Pet.TRAVEL_DESTS.keys())}"
+            )
+
+        # traveling too soon
+        now = time.time()
+        if now < self.last_travel + Pet.TRAVEL_CD:
+            return f"{self.name} wants to relax at home. Try waiting some time before bringing them out again!"
+        self.last_travel = now
+
+        # update stats, return res string
+        stat_change = Pet.TRAVEL_DESTS[destination]['stats']
+        updated_stats = []
+
+        for stat in stat_change:
+            current = getattr(self, stat)
+            changed = current + stat_change[stat]
+            if changed < 0:
+                return Pet.TRAVEL_ALERTS[stat] % self.name
+            updated_stats.append((stat, min(changed, 100)))
+
+        for stat, updated in updated_stats:
+            setattr(self, stat, updated)
+
+        return Pet.TRAVEL_DESTS[destination]['res'] % self.name
