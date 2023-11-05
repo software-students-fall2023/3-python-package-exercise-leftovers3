@@ -62,7 +62,7 @@ def set_stats_on_update(p: Pet, mood_level=0, sanitation_level=0, energy_level=0
 
 
 # assert expected stats
-def expect_stats(p: Pet, mood_level, sanitation_level, energy_level, food_level, water_level):
+def expect_stats(p: Pet, mood_level=0, sanitation_level=0, energy_level=0, food_level=0, water_level=0):
     assert p.mood_level == mood_level
     assert p.sanitation_level == sanitation_level
     assert p.energy_level == energy_level
@@ -73,13 +73,15 @@ def expect_stats(p: Pet, mood_level, sanitation_level, energy_level, food_level,
 class TestBringTo():
 
     def test_bring_to_bad_destination(self, pet: Pet):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError), set_stats_on_update(pet):
             pet.bring_to(123)
-    
+        expect_stats(pet)  # should not change stats
+
 
     def test_bring_to_invalid_destination(self, pet: Pet):
-        with pytest.raises(Pet.InvalidDestinationError):
+        with pytest.raises(Pet.InvalidDestinationError), set_stats_on_update(pet):
             pet.bring_to('movies')
+        expect_stats(pet)  # should not change stats
 
 
     def test_bring_to_lower(self, pet: Pet):
@@ -89,25 +91,33 @@ class TestBringTo():
     def test_bring_to_travel_cooldown(self, pet: Pet):
         with patch('time.time', return_value=10):
             assert pet.bring_to('park') == 'test Moana park'
-            
-        with patch('time.time', return_value=50):
-            assert pet.bring_to('hike') == "Moana wants to relax at home. Try waiting some time before bringing them out again!"
+
+        with patch('time.time', return_value=50), set_stats_on_update(pet):
+            assert pet.bring_to('park') == "Moana wants to relax at home. Try waiting some time before bringing them out again!"
+        expect_stats(pet)  # should not change stats
 
         with patch('time.time', return_value=110):
-            assert pet.bring_to('hike') == 'test Moana hike'
+            assert pet.bring_to('park') == 'test Moana park'
 
 
     def test_bring_to_update_stats(self, pet: Pet):
         with patch('time.time', return_value=0), set_stats_on_update(pet):
             assert pet.bring_to('park') == 'test Moana park'
-            expect_stats(pet, 10, 20, 30, 40, 50)
+        expect_stats(pet, 10, 20, 30, 40, 50)
 
         with patch('time.time', return_value=100), set_stats_on_update(pet, *(100,)*5):
             assert pet.bring_to('hike') == 'test Moana hike'
-            expect_stats(pet, 90, 80, 70, 60, 50)
+        expect_stats(pet, 90, 80, 70, 60, 50)
 
 
     def test_bring_to_update_maxed_stats(self, pet: Pet):
         with set_stats_on_update(pet, *(90,)*5):
             assert pet.bring_to('park') == 'test Moana park'
-            expect_stats(pet, *(100,)*5)
+        expect_stats(pet, *(100,)*5)
+
+
+    def test_bring_to_require_stats(self, pet: Pet):
+        tired_stats = 10, 100, 20, 100, 100
+        with set_stats_on_update(pet, *tired_stats):
+            assert pet.bring_to('hike') == 'test Moana energy_level'
+        expect_stats(pet, *tired_stats)  # should not change stats
