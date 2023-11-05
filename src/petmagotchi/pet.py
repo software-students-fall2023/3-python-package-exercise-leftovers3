@@ -93,7 +93,7 @@ class Pet:
         self.mood_level = 90
         self.energy_level = random.randint(55, 80)
         self.last_update_time = time.time()
-        self.last_travel = time.time()
+        self.last_travel = time.time() - Pet.TRAVEL_CD
         
         self.favoriteToy = random.choice(list(Pet.TOYS.keys()))
 
