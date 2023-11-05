@@ -121,3 +121,25 @@ class TestBringTo():
         with set_stats_on_update(pet, *tired_stats):
             assert pet.bring_to('hike') == 'test Moana energy_level'
         expect_stats(pet, *tired_stats)  # should not change stats
+
+
+    def test_validate_travel_config(self):
+        pet = Pet('Moana', 'Dog')  # no patch
+
+        assert isinstance(Pet.TRAVEL_CD, int) and Pet.TRAVEL_CD >= 0
+
+        for stat, alert in Pet.TRAVEL_ALERTS.items():
+            assert hasattr(pet, stat)  # valid stat
+            assert isinstance(alert, str)  # alert is string
+            assert alert.count('%') == 1  # alert has exactly one placeholder
+
+        safe_stats = set(Pet.TRAVEL_ALERTS.keys())
+
+        for dest in Pet.TRAVEL_DESTS.values():
+            assert set(dest.keys()) == set(('res', 'stats'))  # response and stats change
+            assert isinstance(dest['res'], str)  # response is string
+            assert dest['res'].count('%') == 1  # response has exactly one placeholder
+            for stat, change in dest['stats'].items():
+                assert hasattr(pet, stat)  # valid stat
+                assert stat in safe_stats  # stat has corresponding alert
+                assert isinstance(change, int)  # change is int
