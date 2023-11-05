@@ -187,7 +187,6 @@ class Pet:
         self.mood_level = min(self.mood_level + mood_increase, 100)
         print(reationStr)
     
-    #TODO: unit test
     def _get_image(self, mood):
         imgAddress = "src/images/"
         if(self.type == "Cat"):
@@ -205,13 +204,11 @@ class Pet:
         imgAddress += ".png"
         return Image.open(imgAddress)
     
-    #TODO: unit test
     def see_pet(self):
-        print(f"Here's what {self.name} looks like right now:")
         if 0 <= self.mood_level < 30:
-            return self._get_image("upset").show()
+            return self._get_image("upset")
         elif 30 <= self.mood_level < 80:
-            return self._get_image("neutral").show()
+            return self._get_image("neutral")
         else:
-            return self._get_image("happy").show()
+            return self._get_image("happy")
 
