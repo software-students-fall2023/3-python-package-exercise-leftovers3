@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "petmagotchi"
 description = "A fun Tamagotchi and pet simulation package!"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Capks", email="capks@placeholder.com" },
   { name="Allyson", email="abc9295@nyu.edu" },
