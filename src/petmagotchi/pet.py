@@ -1,5 +1,7 @@
 import time
 import random
+import pickle
+import os
 from PIL import Image
 
 class Pet:
@@ -304,3 +306,22 @@ class Pet:
             setattr(self, stat, updated)
 
         return Pet.TRAVEL_DESTS[destination]['res'] % self.name
+    
+    def save_pet(self):
+        filename = f"{self.name.replace(' ', '_')}.pickle"
+        if '/' in filename or '\\' in filename or ':' in filename:
+            raise ValueError("Pet name contains invalid characters for a filename.")
+        with open(filename, 'wb') as file:
+            pickle.dump(self, file)
+        print(f"Pet '{self.name}' saved to {filename}")
+    
+    @staticmethod
+    def load_pet(file_path):
+        pet_name = os.path.basename(file_path).rsplit('.pickle', 1)[0].replace('_', ' ')
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file for the pet named '{pet_name}' does not exist.")
+        with open(file_path, 'rb') as file:
+            pet = pickle.load(file)
+        print(f"Pet loaded from {file_path}")
+        return pet
+
