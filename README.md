@@ -200,6 +200,10 @@ We will review the changes as soon as possible!
 
 You can run tests in the terminal with the command: pipenv run pytest
 
+## PyPi link!
+
+To access our package on PyPi, click [here](https://pypi.org/project/petmagotchi/0.1.0/)!
+
 ## Contributors
 
 - [Capksz](https://github.com/Capksz)
