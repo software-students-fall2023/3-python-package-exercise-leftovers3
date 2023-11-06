@@ -124,6 +124,26 @@ You can take them to the `park`, on a `hike`, to the `vet`, to the `groomer`, or
 my_Pet.bring_to('park')
 ```
 
+### Save your pet: `save_pet()`
+
+Save your pet for the future!
+
+```
+my_Pet.save_pet()
+```
+
+The file will automatically be called petName.pickle, where petName will be the name of your pet, with underscores representing spaces.
+
+### Load your pet: `load_pet(file_path)`
+
+Load a previous pet:
+
+```
+my_Pet = Pet.load_pet(file_path = 'Fido.pickle')
+```
+
+Ensure to enter the file name correctly!
+
 
 ### Example file
 To see an example file with the above methods, click [here](https://github.com/software-students-fall2023/3-python-package-exercise-leftovers3/blob/main/src/petmagotchi/__main__.py).
