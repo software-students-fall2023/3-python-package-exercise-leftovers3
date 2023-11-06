@@ -15,13 +15,19 @@ Petmagotchi is a package that allows you to simulate taking care of your own vir
 
 ## Installation
 
-To install Petmagotchi, use the following pip command: pip install petmagotchi
+To install Petmagotchi, use the following pip command: 
+
+```
+pip install petmagotchi
+```
 
 ## Functions and usage
 
 Create a new python file and install petmagotchi. Then, import the package with the following line of code:
 
-from petmagotchi import Pet
+```
+from petmagotchi.pet import Pet
+```
 
 ### Create Pet: `Pet(name,type)`
 
