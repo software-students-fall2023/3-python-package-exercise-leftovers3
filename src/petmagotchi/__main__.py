@@ -1,9 +1,13 @@
 # petmagotchi/__main__.py
-from pet import Pet
+
+#Run in terminal: pip install Petmagotchi
+
+from pet import Pet #Replace this with: from Petmagotchi import Pet
 
 def main():
     # Create a pet instance
     my_Pet = Pet(name='Fido', type='Dog')
+    print()
 
     #Load pet
     # my_Pet = Pet.load_pet("Fido.pickle")
