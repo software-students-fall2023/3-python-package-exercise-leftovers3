@@ -109,17 +109,6 @@ my_Pet.pet()
 
 A pet that is too unhappy may not be willing to come for pets. Keep them happy by playing with them!
 
-### See your pet: `see_pet()`
-
-Want to see a picture of your pet? Use the see_pet() method: 
-
-```python
-my_Pet.see_pet()
-```
-
-The image you see will depend on your pet's mood.
-
-
 ### Bring them somewhere: `bring_to(destination)`
 
 Take your pet somewhere fun!
