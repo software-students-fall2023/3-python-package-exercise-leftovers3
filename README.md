@@ -197,7 +197,7 @@ You can run tests in the terminal with the command: pipenv run pytest
 
 ## PyPi link!
 
-To access our package on PyPi, click [here](https://pypi.org/project/petmagotchi/0.1.0/)!
+To access our package on PyPi, click [here](https://pypi.org/project/petmagotchi/)!
 
 ## Contributors
 
