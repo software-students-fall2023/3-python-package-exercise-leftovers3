@@ -244,31 +244,6 @@ class Pet:
         self.mood_level = min(self.mood_level + mood_increase, 100)
         print(reationStr)
 
-    def _get_image(self, mood):
-        imgAddress = "src/images/"
-        if(self.type == "Cat"):
-            imgAddress += "cat/cat_"
-        elif(self.type == "Dog"):
-            imgAddress += "dog/dog_"
-        
-        if mood == "upset":
-            imgAddress += "upset"
-        elif mood == "neutral":
-            imgAddress += "neutral"
-        else:
-            imgAddress += "happy"
-        
-        imgAddress += ".png"
-        return Image.open(imgAddress)
-
-    def see_pet(self):
-        if 0 <= self.mood_level < 30:
-            return self._get_image("upset")
-        elif 30 <= self.mood_level < 80:
-            return self._get_image("neutral")
-        else:
-            return self._get_image("happy")
-
     def bring_to(self, destination):
         self._update_status()
 

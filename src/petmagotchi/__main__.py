@@ -30,9 +30,6 @@ def main():
     my_Pet.print_status()
     print()
 
-    #See pet
-    my_Pet.see_pet()
-
     #Wash pet
     my_Pet.wash()
     my_Pet.print_status()
